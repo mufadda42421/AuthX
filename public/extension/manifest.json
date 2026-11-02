@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "AuthenticatorX – TOTP 2FA Vault",
+  "short_name": "AuthenticatorX",
+  "version": "1.0.0",
+  "description": "Your security codes. Always within reach. Secure RFC 6238 TOTP authenticator with Web Crypto AES-GCM encryption.",
+  "permissions": [
+    "storage",
+    "clipboardWrite",
+    "alarms"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AuthenticatorX",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

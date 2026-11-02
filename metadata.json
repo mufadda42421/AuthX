@@ -1,0 +1,6 @@
+{
+  "name": "AuthenticatorX",
+  "description": "Your security codes. Always within reach. Secure RFC 6238 TOTP authenticator Chrome extension with Web Crypto AES-GCM encryption, IndexedDB, and QR code import.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

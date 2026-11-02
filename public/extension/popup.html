@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuthenticatorX</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <div class="brand-text">
+          <span class="brand-name">AuthenticatorX</span>
+          <span class="brand-tagline">Secure 2FA Vault</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btnOptions" class="icon-btn" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+        <button id="btnLock" class="icon-btn" title="Lock Vault">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main View (When Unlocked) -->
+    <main id="viewMain" class="view">
+      <!-- Search & Add Bar -->
+      <div class="search-add-bar">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search accounts..." autocomplete="off">
+        </div>
+        <button id="btnAddAccount" class="primary-btn" title="Add Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add
+        </button>
+      </div>
+
+      <!-- Accounts List -->
+      <div id="accountsList" class="accounts-list"></div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-icon-shield">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>No 2FA Accounts Yet</h3>
+        <p>Add your first authentication account manually or import via otpauth:// URI.</p>
+        <button id="btnEmptyAdd" class="primary-btn">Add Account</button>
+      </div>
+    </main>
+
+    <!-- Lock / Setup View -->
+    <div id="viewLock" class="view-overlay hidden">
+      <div class="lock-card">
+        <div class="lock-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h2 id="lockTitle">Vault Locked</h2>
+        <p id="lockDesc">Enter your master password to unlock your 2FA security codes.</p>
+        <form id="lockForm">
+          <input type="password" id="masterPasswordInput" placeholder="Master Password" required autocomplete="current-password">
+          <div id="setupConfirmGroup" class="hidden">
+            <input type="password" id="confirmPasswordInput" placeholder="Confirm Master Password" autocomplete="new-password">
+          </div>
+          <div id="lockError" class="error-msg hidden"></div>
+          <button type="submit" id="btnUnlock" class="primary-btn full-width">Unlock Vault</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Account Modal -->
+    <div id="modalAdd" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Add Account</h3>
+          <button id="btnCloseAddModal" class="icon-btn">&times;</button>
+        </div>
+        <form id="addForm">
+          <div class="form-group">
+            <label for="accIssuer">Service / Issuer</label>
+            <input type="text" id="accIssuer" placeholder="e.g. GitHub, Google, AWS" required>
+          </div>
+          <div class="form-group">
+            <label for="accName">Account Identifier</label>
+            <input type="text" id="accName" placeholder="e.g. user@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="accSecret">Secret Key (Base32)</label>
+            <input type="text" id="accSecret" placeholder="JBSWY3DPEHPK3PXP" required autocomplete="off">
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="accDigits">Digits</label>
+              <select id="accDigits">
+                <option value="6" selected>6 digits</option>
+                <option value="8">8 digits</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="accPeriod">Period (sec)</label>
+              <input type="number" id="accPeriod" value="30" min="10" max="120">
+            </div>
+            <div class="form-group flex-1">
+              <label for="accAlgo">Algorithm</label>
+              <select id="accAlgo">
+                <option value="SHA-1" selected>SHA1</option>
+                <option value="SHA-256">SHA256</option>
+                <option value="SHA-512">SHA512</option>
+              </select>
+            </div>
+          </div>
+          <div class="uri-import-section">
+            <label>Or paste otpauth:// URI</label>
+            <input type="text" id="uriInput" placeholder="otpauth://totp/...">
+          </div>
+          <div id="addError" class="error-msg hidden"></div>
+          <button type="submit" class="primary-btn full-width">Save to Vault</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">Copied to clipboard</div>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
